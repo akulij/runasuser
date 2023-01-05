@@ -26,7 +26,7 @@ mod tests {
         let ret = runcmd_login(username, pass, &vec!["touch", "testrunfile.txt"]);
         match ret {
             Ok(_) => (),
-            Err(code) => panic!("Failed test with code {}", code.to_string())
+            Err(code) => panic!("Failed test with code {}. Info: {}", code.1, code.0),
         };
     }
 }
