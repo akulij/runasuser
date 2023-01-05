@@ -52,6 +52,21 @@ fn service_token_by_login(login: &str, password: &str) -> Result<HANDLE, (String
 }
 
 #[cfg(windows)]
+pub fn runcmd_login(
+    login: &str,
+    password: &str,
+    cmd: &Vec<&str>,
+) -> Result<PROCESS_INFORMATION, (String, u32)> {
+    let token;
+    match service_token_by_login(login, password) {
+        Ok(t) => token = t,
+        Err(e) => return Err(e),
+    }
+
+    runcmd_token(&token, cmd)
+}
+
+#[cfg(windows)]
 pub fn runcmd_token(token: &HANDLE, cmd: &Vec<&str>) -> Result<PROCESS_INFORMATION, (String, u32)> {
     let cmd_raw = tools::generate_cmd(cmd);
     let mut process_info: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
