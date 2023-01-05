@@ -24,6 +24,7 @@ Read page https://learn.microsoft.com/en-us/windows/win32/debug/system-error-cod
 ", error_code)
 }
 
+#[cfg(windows)]
 fn service_token_by_login(
     login: &str,
     domain: Option<&str>,
