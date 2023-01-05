@@ -30,19 +30,10 @@ fn service_token_by_login(
     domain: Option<&str>,
     password: Option<&str>,
 ) -> Result<HANDLE, (String, u32)> {
+
     let login_raw = tools::encode_str(login);
-
-    let domain_raw;
-    match domain {
-        Some(d) => domain_raw = tools::encode_str(d),
-        None => domain_raw = null::<u16>().cast_mut(),
-    }
-
-    let password_raw;
-    match password {
-        Some(pass) => password_raw = tools::encode_str(pass),
-        None => password_raw = null::<u16>().cast_mut(),
-    }
+    let domain_raw = tools::get_pointer_optional_string(domain);
+    let password_raw = tools::get_pointer_optional_string(password);
 
     let mut token: HANDLE = null::<c_void>().cast_mut();
 
