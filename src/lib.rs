@@ -66,11 +66,12 @@ fn service_token_by_login(login: &str, domain: Option<&str>, password: Option<&s
 #[cfg(windows)]
 pub fn runcmd_login(
     login: &str,
-    password: &str,
+    domain: Option<&str>
+    password: Option<&str>,
     cmd: &Vec<&str>,
 ) -> Result<PROCESS_INFORMATION, (String, u32)> {
     let token;
-    match service_token_by_login(login, password) {
+    match service_token_by_login(login, domain, password) {
         Ok(t) => token = t,
         Err(e) => return Err(e),
     }
