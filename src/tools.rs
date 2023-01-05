@@ -11,3 +11,10 @@ pub fn generate_cmd(args: &Vec<&str>) -> *mut u16 {
 
     cmd_str.as_mut_ptr()
 }
+
+pub fn get_pointer_optional_string(string: Option<&str>) -> *mut u16 {
+    match string {
+        Some(s) => encode_str(s),
+        None => std::ptr::null::<u16>().cast_mut(),
+    }
+}
