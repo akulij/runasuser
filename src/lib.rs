@@ -26,9 +26,15 @@ Read page https://learn.microsoft.com/en-us/windows/win32/debug/system-error-cod
 
 }
 
-fn service_token_by_login(login: &str, password: &str) -> Result<HANDLE, (String, u32)> {
+fn service_token_by_login(login: &str, password: Option<&str>) -> Result<HANDLE, (String, u32)> {
     let login_raw = tools::encode_str(login);
-    let password_raw = tools::encode_str(password);
+
+    let password_raw;
+    match password {
+        Some(pass) => password_raw = tools::encode_str(pass),
+        None => password_raw = null::<u16>().cast_mut(),
+    }
+
     let mut token: HANDLE = null::<c_void>().cast_mut();
 
     let success: i32;
