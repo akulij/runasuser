@@ -51,6 +51,39 @@ fn service_token_by_login(login: &str, password: &str) -> Result<HANDLE, (String
     Ok(token)
 }
 
+#[cfg(windows)]
+pub fn runcmd_token(token: &HANDLE, cmd: &Vec<&str>) -> Result<PROCESS_INFORMATION, (String, u32)> {
+    let cmd_raw = tools::generate_cmd(cmd);
+    let mut process_info: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
+    let success: i32;
+
+    unsafe {
+        let mut startup_info: STARTUPINFOW = std::mem::zeroed();
+        startup_info.cb = size_of::<STARTUPINFOW>() as u32;
+
+        success = CreateProcessAsUserW(
+            *token,
+            null(),
+            cmd_raw,
+            null::<SECURITY_ATTRIBUTES>().cast_mut(),
+            null::<SECURITY_ATTRIBUTES>().cast_mut(),
+            false as i32,
+            0,
+            null::<c_void>().cast_mut(),
+            null(),
+            &mut startup_info,
+            &mut process_info,
+        );
+    };
+
+    if success == false as i32 {
+        let error_code = unsafe { GetLastError() };
+
+        return Err((format_error_message(error_code), error_code));
+    };
+    Ok(process_info)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
