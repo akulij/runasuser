@@ -1,6 +1,19 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+use std::mem::size_of;
+use std::ptr::null;
+
+#[cfg(windows)]
+extern crate winapi;
+use winapi::um::processthreadsapi::CreateProcessAsUserW;
+use winapi::um::winbase::LogonUserW;
+use winapi::um::errhandlingapi::GetLastError;
+
+use winapi::ctypes::c_void;
+use winapi::um::minwinbase::SECURITY_ATTRIBUTES;
+use winapi::um::processthreadsapi::{PROCESS_INFORMATION, STARTUPINFOW};
+use winapi::um::winbase::{LOGON32_LOGON_SERVICE, LOGON32_PROVIDER_DEFAULT};
+use winapi::um::winnt::HANDLE;
+
+mod tools;
 
 #[cfg(test)]
 mod tests {
