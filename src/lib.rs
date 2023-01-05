@@ -15,6 +15,32 @@ use winapi::um::winnt::HANDLE;
 
 mod tools;
 
+
+fn service_token_by_login(login: &str, password: &str) -> Result<HANDLE, (String, u32)> {
+    let login_raw = tools::encode_str(login);
+    let password_raw = tools::encode_str(password);
+    let mut token: HANDLE = null::<c_void>().cast_mut();
+
+    let success: i32;
+    unsafe {
+        success = LogonUserW(
+            login_raw,
+            null::<u16>().cast_mut(),
+            password_raw,
+            LOGON32_LOGON_SERVICE,
+            LOGON32_PROVIDER_DEFAULT,
+            &mut token,
+        );
+    };
+    if success == false as i32 {
+        let error_code = unsafe { GetLastError() };
+
+        return Err((format_error_message(error_code), error_code));
+    };
+
+    Ok(token)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
